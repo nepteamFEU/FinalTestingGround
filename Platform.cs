@@ -89,16 +89,28 @@ namespace FinalTestingGround
             }
         }
 
-        public projectile ShootProjectile(Vector2 velocity)
+        public projectile ShootProjectile(Vector2 velocity,int player)
         {
             if (ammo > 0 && cooldown <= 0)
             {
-                Rectangle spawnPosition = new Rectangle(platRec.X + platRec.Width + 5, platRec.Y + platRec.Height / 2 - 12, 25, 25);
-                projectile newProjectile = new projectile(spawnPosition, velocity);
-                projectiles.Add(newProjectile);
-                ammo--;
-                cooldown = maxcooldown;
-                return newProjectile;
+                if (player == 1)
+                {
+                    Rectangle spawnPosition = new Rectangle(platRec.X + platRec.Width + 5, platRec.Y + platRec.Height / 2 - 12, 25, 25);
+                    projectile newProjectile = new projectile(spawnPosition, velocity, new Rectangle());
+                    projectiles.Add(newProjectile);
+                    ammo--;
+                    cooldown = maxcooldown;
+                    return newProjectile;
+                }
+                else
+                {
+                    Rectangle spawnPosition = new Rectangle(platRec.X + platRec.Width - 75, platRec.Y + platRec.Height / 2 - 12, 25, 25);
+                    projectile newProjectile = new projectile(spawnPosition, velocity, new Rectangle());
+                    projectiles.Add(newProjectile);
+                    ammo--;
+                    cooldown = maxcooldown;
+                    return newProjectile;
+                }
             }
             else
             {
@@ -114,11 +126,11 @@ namespace FinalTestingGround
             {
                 if (player == 1)
                 {
-                    ShootProjectile(new Vector2(5, 0));
+                    ShootProjectile(new Vector2(5, 0), player);
                 }
                 else if (player == 2)
                 {
-                    ShootProjectile(new Vector2(-5, 0));
+                    ShootProjectile(new Vector2(-5, 0), player);
                 }
             }
         }
@@ -182,6 +194,13 @@ namespace FinalTestingGround
             
         }
 
+        public void damageCheck (projectile projectile)
+        {
+            if (platRec.Intersects(projectile.DamageCheck) == true )
+            {
+                this.platRec.Width--;
+            }
+        }
         public int Speed { get => speed; set => speed = value; }
     }
 }

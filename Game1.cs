@@ -74,6 +74,12 @@ namespace FinalTestingGround
             platform2.ShootControl(Keys.H, 2);
             platform2.UpdateProjectiles();
 
+            foreach (var projectile in projectiles)
+            {
+                platform1.damageCheck(projectile);
+                platform2.damageCheck(projectile);
+            }
+
             base.Update(gameTime);
         }
 
