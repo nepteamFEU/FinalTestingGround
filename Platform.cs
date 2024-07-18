@@ -89,7 +89,7 @@ namespace FinalTestingGround
             }
         }
 
-        public projectile ShootProjectile(Vector2 velocity,int player)
+        public projectile ShootProjectile(Vector2 velocity, int player)
         {
             if (ammo > 0 && cooldown <= 0)
             {
@@ -152,7 +152,7 @@ namespace FinalTestingGround
             }
             if (cooldown > 0)
             {
-                cooldown = cooldown-reload*3;
+                cooldown = cooldown - reload * 3;
             }
         }
 
@@ -164,14 +164,14 @@ namespace FinalTestingGround
             }
         }
 
-        public void DrawUI(SpriteBatch spriteBatch,int player)
+        public void DrawUI(SpriteBatch spriteBatch, int player)
         {
             // Draw charge
             if (player == 1)
             {
                 for (int i = 0; i < charge; i++)
                 {
-                    spriteBatch.Draw(chargeSprite, new Vector2(platRec.X - 30, platRec.Y + i *4), Color.White);
+                    spriteBatch.Draw(chargeSprite, new Vector2(platRec.X - 30, platRec.Y + i * 4), Color.White);
                 }
                 for (int i = 0; i < ammo; i++)
                 {
@@ -190,13 +190,13 @@ namespace FinalTestingGround
                 }
             }
             // Draw ammo
-            
-            
+
+
         }
 
-        public void damageCheck (projectile projectile)
+        public void damageCheck(projectile projectile)
         {
-            if (platRec.Intersects(projectile.DamageCheck) == true )
+            if (platRec.Intersects(projectile.DamageCheck) == true)
             {
                 this.platRec.Width--;
             }
