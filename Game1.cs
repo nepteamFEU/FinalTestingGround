@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Microsoft.Xna.Framework.Media;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
@@ -29,6 +31,8 @@ namespace FinalTestingGround
         Texture2D chargeSprite;
         Texture2D ammoSprite;
         SpriteFont Text;
+        Song bgm;
+        SoundEffect hitsfx, winsfx, shootsfx;
         Selection start, cont, exit;
         bool StartGame, visibletext;
 
@@ -74,9 +78,9 @@ namespace FinalTestingGround
                 Content.Load<Texture2D>("charge4"), Content.Load<Texture2D>("bullet_healthbar"), new Vector2(WCBW - 40, WCBH - 40), new Vector2(WCBW - 344, WCBH - 525));
 
             p1lifebar = new P1Lifebar(Content.Load<Texture2D>("box"),
-                new Rectangle(200, 10, 100, 30), Color.White, 120, 40);
-            p2lifebar = new P2Lifebar(Content.Load<Texture2D>("box"), 
-                new Rectangle(500, 10, 100, 30), Color.White, 120, 40);
+                new Rectangle(200, 10, 100, 30), Color.Green, 120, 40);
+            p2lifebar = new P2Lifebar(Content.Load<Texture2D>("box"),
+                new Rectangle(500, 10, 100, 30), Color.Green, 120, 40);
 
             p1score = new P1Score(Color.White, 0);
             p2score = new P2Score(Color.White, 0);
@@ -85,9 +89,7 @@ namespace FinalTestingGround
             start = new Start(false, new Rectangle(50, 250, 300, 30), Content.Load<Texture2D>("box"), Color.White);
             cont = new Continue(false, new Rectangle(50, 300, 300, 30), Content.Load<Texture2D>("box"), Color.White);
             exit = new Exit(false, new Rectangle(50, 350, 300, 30), Content.Load<Texture2D>("box"), Color.White);
-
-
-            
+       
             base.Initialize();
         }
 
@@ -95,21 +97,31 @@ namespace FinalTestingGround
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             Text = Content.Load<SpriteFont>("File");
+            hitsfx = Content.Load<SoundEffect> ("hit_sfx");
+            shootsfx = Content.Load<SoundEffect>("shoot_sfx");
+            winsfx = Content.Load<SoundEffect>("win");
+            bgm = Content.Load<Song>("bgm");
             menuBG = Content.Load<Texture2D>("menu_bg");
             BG = Content.Load<Texture2D>("background");
             rabbitLifebar = Content.Load<Texture2D>("bunny_healthbar1");
             squirrelLifebar = Content.Load<Texture2D>("squirrel_healthbar");
 
+            MediaPlayer.Play(bgm);
+
         }
 
         protected override void Update(GameTime gameTime)
         {
+
+           
+            
+            
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-           // ball.ballMovement();
+            // ball.ballMovement();
 
-           // Check collision with platforms
+            // Check collision with platforms
             obstacle1.ballcollision(platform1.PlatRec);
             obstacle2.ballcollision(platform2.PlatRec);
 
@@ -155,7 +167,7 @@ namespace FinalTestingGround
                     pstats = Load();
                     //updates the scores, lifebar, 
                     Trace.WriteLine($"{p1score.ScoreCount = pstats.p1score} {p2score.ScoreCount = pstats.p2score} " +
-                        $"{p1lifebar.LifebarWidth = pstats.p1life} {p2lifebar.LifebarWidth = pstats.p2life} {rounds.ScoreCount = pstats.round} {winner = pstats.winner}"); 
+                        $"{p1lifebar.LifebarWidth = pstats.p1life} {p2lifebar.LifebarWidth = pstats.p2life} {rounds.ScoreCount = pstats.round} {winner = pstats.winner}");
 
                     visibletext = !visibletext;
                 }
@@ -169,14 +181,17 @@ namespace FinalTestingGround
             // bullets projectiles
             foreach (var projectile in projectiles)
             {
-                if (projectile.Position.Intersects(obstacle1.BallRec) ||
-                    projectile.Position.Intersects(obstacle2.BallRec) ||
-                    projectile.Position.Intersects(obstacle3.BallRec))
-                {
-                    projectilesToRemove.Add(projectile);
-                }
-                platform1.damageCheck(1,projectile,p1lifebar,p2lifebar,p1score,p2score,rounds,pstats); //pstats prone to failure
-                platform2.damageCheck(2,projectile,p2lifebar,p1lifebar,p2score,p1score,rounds,pstats);
+        if (projectile.Position.Intersects(obstacle1.BallRec) ||
+            projectile.Position.Intersects(obstacle2.BallRec) ||
+            projectile.Position.Intersects(obstacle3.BallRec))
+        {
+            projectilesToRemove.Add(projectile);
+        }
+        platform1.damageCheck(1, projectile, p1lifebar, p2lifebar, p1score, p2score, rounds, pstats); //pstats prone to failure
+        platform2.damageCheck(2, projectile, p2lifebar, p1lifebar, p2score, p1score, rounds, pstats);
+
+//  MediaPlayer.Play(shootsfx);
+
             }
 
             foreach (var projectile in projectilesToRemove)
@@ -188,12 +203,16 @@ namespace FinalTestingGround
             {
                 Save((platform1.WinnerCheck(1, p1lifebar, p2lifebar, p1score, p2score, rounds, "", pstats)));
                 winner = "Player 1 Wins!";
+
+                winsfx.Play();
             }
 
             if (p2score.ScoreCount == 2)
             {
                 Save((platform2.WinnerCheck(2, p2lifebar, p1lifebar, p2score, p1score, rounds, "", pstats)));
                 winner = "Player 2 Wins!";
+
+                winsfx.Play();
             }
 
 
@@ -214,8 +233,8 @@ namespace FinalTestingGround
             return JsonSerializer.Deserialize<PlayerStats>(fileContents);
         }
 
-       
-       
+
+
 
         protected override void Draw(GameTime gameTime)
         {
@@ -223,7 +242,7 @@ namespace FinalTestingGround
 
             _spriteBatch.Begin();
 
-           
+
 
             if (!visibletext)
             {
