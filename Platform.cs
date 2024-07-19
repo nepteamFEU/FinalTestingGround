@@ -105,7 +105,7 @@ namespace FinalTestingGround
             {
                 if (player == 1)
                 {
-                    Rectangle spawnPosition = new Rectangle(platRec.X + platRec.Width + 5, platRec.Y + platRec.Height / 2 - 12, 25, 25);
+                    Rectangle spawnPosition = new Rectangle(platRec.X + platRec.Width -6, platRec.Y + platRec.Height / 2 - 4, 25, 25);
                     projectile newProjectile = new projectile(spawnPosition, velocity, new Rectangle());
                     projectiles.Add(newProjectile);
                     ammo--;
@@ -114,7 +114,7 @@ namespace FinalTestingGround
                 }
                 else
                 {
-                    Rectangle spawnPosition = new Rectangle(platRec.X + platRec.Width - 75, platRec.Y + platRec.Height / 2 - 12, 25, 25);
+                    Rectangle spawnPosition = new Rectangle(platRec.X + platRec.Width - 95, platRec.Y + platRec.Height / 2 - 4, 25, 25);
                     projectile newProjectile = new projectile(spawnPosition, velocity, new Rectangle());
                     projectiles.Add(newProjectile);
                     ammo--;
