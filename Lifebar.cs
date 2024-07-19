@@ -51,14 +51,6 @@ namespace FinalTestingGround
 
         }
 
-        //should return to full width
-        /*     public void lifebarReset() 
-             {
-                 LifebarWidth = 120;
-                 LifebarNumber = 40;
-                 LifebarColor = Color.White;
-             } */
-
 
     }
 
@@ -69,13 +61,6 @@ namespace FinalTestingGround
         {
 
         }
-
-        /*    public void lifebarReset()
-            {  
-                LifebarWidth = 120;
-                LifebarNumber = 40;
-                LifebarColor = Color.White;
-            } */
 
 
     }
