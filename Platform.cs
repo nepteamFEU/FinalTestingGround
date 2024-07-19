@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 
 namespace FinalTestingGround
 {
@@ -15,6 +17,7 @@ namespace FinalTestingGround
         int boundTop, boundBottom, boundLeft, boundRight;
         int speed, maxammo, ammo, reload, charge, maxcharge, cooldown, maxcooldown;
         List<projectile> projectiles;
+        
 
         // UI elements
         Texture2D chargeSprite;
@@ -48,8 +51,8 @@ namespace FinalTestingGround
             this.ammoSprite = ammoSprite;
             this.chargePosition = chargePosition;
             this.ammoPosition = ammoPosition;
-           
-        
+
+
 
         }
 
@@ -171,6 +174,9 @@ namespace FinalTestingGround
             foreach (var projectile in projectiles)
             {
                 spriteBatch.Draw(projectileTexture, projectile.Position, Color.White);
+              
+
+
             }
         }
 
@@ -210,9 +216,9 @@ namespace FinalTestingGround
             {
                 return;
             }
-        } 
+        }
 
-        public PlayerStats WinnerCheck (int self, Lifebar lifebar, Lifebar opponent, Score score,Score OpponentScore, Score rounds, string winner, PlayerStats pstats)
+        public PlayerStats WinnerCheck(int self, Lifebar lifebar, Lifebar opponent, Score score, Score OpponentScore, Score rounds, string winner, PlayerStats pstats)
         {
             if (score.ScoreCount == 2)
             {
@@ -232,19 +238,20 @@ namespace FinalTestingGround
                     winner = winner
                 };
                 return pstats;
-                
+
             }
             else
-            {  return null; }
+            { return null; }
         }
 
-        public void damageCheck(int player,projectile projectile, Lifebar lifebar,
-                    Lifebar opponent, Score score,Score opponentScore,Score rounds, PlayerStats pstats)
+        public void damageCheck(int player, projectile projectile, Lifebar lifebar,
+                    Lifebar opponent, Score score, Score opponentScore, Score rounds, PlayerStats pstats)
         {
             if (platRec.Intersects(projectile.DamageCheck) == true)
             {
-                lifebar.LifebarWidth-- ;
+                lifebar.LifebarWidth--;
                 lifebar.LifebarNumber = lifebar.LifebarNumber -= 5;
+              
                 if (lifebar.LifebarWidth <= 0)
                 {
                     lifebar.lifebarReset();
@@ -257,6 +264,6 @@ namespace FinalTestingGround
             }
         }
         public int Speed { get => speed; set => speed = value; }
-       
+
     }
 }
