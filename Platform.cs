@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Xml.Linq;
 
 namespace FinalTestingGround
 {
@@ -211,10 +212,47 @@ namespace FinalTestingGround
             }
         } 
 
-        public void damageCheck(projectile projectile)
+        public PlayerStats WinnerCheck (int self, Lifebar lifebar, Lifebar opponent, Score score,Score OpponentScore, Score rounds, string winner, PlayerStats pstats)
+        {
+            if (score.ScoreCount == 2)
+            {
+                winner = "Player " + self + " Wins!";
+                rounds.CountReset();
+                rounds.ScoreCount += 1;
+                OpponentScore.CountReset();
+                score.CountReset();
+
+                pstats = new PlayerStats()
+                {
+                    p1score = score.ScoreCount,
+                    p2score = OpponentScore.ScoreCount,
+                    p1life = lifebar.LifebarWidth,
+                    p2life = opponent.LifebarWidth,
+                    round = rounds.ScoreCount,
+                    winner = winner
+                };
+                return pstats;
+                
+            }
+            else
+            {  return null; }
+        }
+
+        public void damageCheck(int player,projectile projectile, Lifebar lifebar,
+                    Lifebar opponent, Score score,Score opponentScore,Score rounds, PlayerStats pstats)
         {
             if (platRec.Intersects(projectile.DamageCheck) == true)
             {
+                lifebar.LifebarWidth-- ;
+                lifebar.LifebarNumber = lifebar.LifebarNumber -= 5;
+                if (lifebar.LifebarWidth <= 0)
+                {
+                    lifebar.lifebarReset();
+                    opponent.lifebarReset();
+                    opponentScore.Updatescore();
+                    rounds.ScoreCount++;
+                }
+                //WinnerCheck(player,lifebar, opponent, score, opponentScore, rounds,"", pstats);
                 return; //decrements width is the original statement here
             }
         }

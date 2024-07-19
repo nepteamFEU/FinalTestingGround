@@ -165,12 +165,7 @@ namespace FinalTestingGround
                 }
 
             }
-
-
-            //loop for lifebar and scoring
-            //make a conditional statement where the bullet interesects to the platform and causes damage
-            //so far I made the condition where characters intersect with the obstacles and cuases damage just to see if this work
-            //Unable to integrate the bullets to this loop for the lifebar and score. Asking for help on this one...
+            /*
               if (obstacle2.BallRec.Intersects(platform1.PlatRec)) //player 2 scores 
               {
 
@@ -289,7 +284,7 @@ namespace FinalTestingGround
                           if (p1score.ScoreCount == 2) //Player wins 1 round of a score of 3
                           {
 
-                              winner = "Player 1 Wins!";
+                                 = "Player 1 Wins!";
                               rounds.CountReset();
                               rounds.ScoreCount += 1;
                               p2score.CountReset();
@@ -313,14 +308,26 @@ namespace FinalTestingGround
                       }
                   }
               }
-
+              */
 
             // bullets projectiles
             foreach (var projectile in projectiles)
             {
-                platform1.damageCheck(projectile);
-                platform2.damageCheck(projectile);
-            } 
+                platform1.damageCheck(1,projectile,p1lifebar,p2lifebar,p1score,p2score,rounds,pstats); //pstats prone to failure
+                platform2.damageCheck(2,projectile,p2lifebar,p1lifebar,p2score,p1score,rounds,pstats);
+            }
+
+            if (p1score.ScoreCount == 2)
+            {
+                Save((platform1.WinnerCheck(1, p1lifebar, p2lifebar, p1score, p2score, rounds, "", pstats)));
+                winner = "Player 1 Wins!";
+            }
+
+            if (p2score.ScoreCount == 2)
+            {
+                Save((platform2.WinnerCheck(2, p2lifebar, p1lifebar, p2score, p1score, rounds, "", pstats)));
+                winner = "Player 2 Wins!";
+            }
 
 
             base.Update(gameTime);
