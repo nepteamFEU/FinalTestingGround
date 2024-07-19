@@ -25,6 +25,12 @@
 /processorParam:TextureFormat=Color
 /build:background.png
 
+#begin bgm.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:bgm.mp3
+
 #begin box.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -188,6 +194,12 @@
 /processorParam:TextureFormat=Compressed
 /build:File.spritefont
 
+#begin hit_sfx.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:hit_sfx.wav
+
 #begin menu_bg.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -284,6 +296,12 @@
 /processorParam:TextureFormat=Color
 /build:projectile.png
 
+#begin shoot_sfx.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:shoot_sfx.wav
+
 #begin squirrel_healthbar.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -331,4 +349,10 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Untitled.png
+
+#begin win.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:win.wav
 
