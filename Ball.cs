@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace FinalTestingGround
 {
@@ -30,42 +31,47 @@ namespace FinalTestingGround
         public Rectangle BallRec { get => ballRec; set => ballRec = value; }
         public Color BallColor { get => ballColor; set => ballColor = value; }
 
-        public int scorePoint()
-        {
-            if (ballRec.X <= 0)
-                return 1;
-            if (ballRec.X >= boundaryX - ballRec.Width)
-                return 2;
-            return 0;
-        }
+        /*  public int scorePoint()
+          {
+              if (ballRec.X <= 0)
+                  return 1;
+              if (ballRec.X >= boundaryX - ballRec.Width)
+                  return 2;
+              return 0;
+          } */
 
         public void ballcollision(Rectangle platform)
         {
             if (ballRec.Intersects(platform))
             {
-                ballDirX = !ballDirX;
+                return;
             }
         }
 
-        public void ballMovement()
+        internal void ballcollision(Rectangle platRec, Vector2 platformspeed)
         {
-            if (ballDirX)
-                ballRec.X += speedX;
-            else
-                ballRec.X -= speedX;
-
-            if (ballDirY)
-                ballRec.Y += speedY;
-            else
-                ballRec.Y -= speedY;
-
-            // Handle boundary collision for X
-            if (ballRec.X <= 0 || ballRec.X >= boundaryX - ballRec.Width)
-                ballDirX = !ballDirX;
-
-            // Handle boundary collision for Y
-            if (ballRec.Y <= 0 || ballRec.Y >= boundaryY - ballRec.Height)
-                ballDirY = !ballDirY;
+            throw new NotImplementedException();
         }
+
+        /*   public void ballMovement()
+           {
+               if (ballDirX)
+                   ballRec.X += speedX;
+               else
+                   ballRec.X -= speedX;
+
+               if (ballDirY)
+                   ballRec.Y += speedY;
+               else
+                   ballRec.Y -= speedY;
+
+               // Handle boundary collision for X
+               if (ballRec.X <= 0 || ballRec.X >= boundaryX - ballRec.Width)
+                   ballDirX = !ballDirX;
+
+               // Handle boundary collision for Y
+               if (ballRec.Y <= 0 || ballRec.Y >= boundaryY - ballRec.Height)
+                   ballDirY = !ballDirY;
+           } */
     }
 }
