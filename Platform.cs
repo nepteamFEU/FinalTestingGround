@@ -47,6 +47,15 @@ namespace FinalTestingGround
             this.ammoSprite = ammoSprite;
             this.chargePosition = chargePosition;
             this.ammoPosition = ammoPosition;
+           
+        
+
+        }
+
+        public Platform(Texture2D texture2D1, Rectangle rectangle, Color red, int v1, int wCBH, int v2, int wCBW, int speed, int v3, int v4, int v5, int v6, int v7, int v8, int v9, List<projectile> projectiles, Texture2D texture2D2, Texture2D texture2D3, Vector2 vector21, Vector2 vector22, int v10)
+        {
+            this.speed = speed;
+            this.projectiles = projectiles;
         }
 
         public Texture2D PlatText { get => platText; set => platText = value; }
@@ -160,7 +169,7 @@ namespace FinalTestingGround
         {
             foreach (var projectile in projectiles)
             {
-                spriteBatch.Draw(projectileTexture, projectile.Position, Color.Green);
+                spriteBatch.Draw(projectileTexture, projectile.Position, Color.White);
             }
         }
 
@@ -175,7 +184,7 @@ namespace FinalTestingGround
                 }
                 for (int i = 0; i < ammo; i++)
                 {
-                    spriteBatch.Draw(ammoSprite, ammoPosition + new Vector2(i * 20, 0), Color.White);
+                    spriteBatch.Draw(ammoSprite, ammoPosition + new Vector2(i * 17, 0), Color.White);
                 }
             }
             else if (player == 2)
@@ -186,7 +195,7 @@ namespace FinalTestingGround
                 }
                 for (int i = 0; i < ammo; i++)
                 {
-                    spriteBatch.Draw(ammoSprite, ammoPosition + new Vector2(i * -20, 0), Color.White);
+                    spriteBatch.Draw(ammoSprite, ammoPosition + new Vector2(i * -17, 0), Color.White);
                 }
             }
             // Draw ammo
@@ -194,13 +203,22 @@ namespace FinalTestingGround
 
         }
 
+        public void platformcollision(Rectangle ball)
+        {
+            if (platRec.Intersects(ball))
+            {
+                return;
+            }
+        } 
+
         public void damageCheck(projectile projectile)
         {
             if (platRec.Intersects(projectile.DamageCheck) == true)
             {
-                this.platRec.Width--;
+                return; //decrements width is the original statement here
             }
         }
         public int Speed { get => speed; set => speed = value; }
+       
     }
 }

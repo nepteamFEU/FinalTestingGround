@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>D:/Documents/Codes/C#/Game Design 1/FINALS/From Joko/FinalTestingGround-master/Content/bullet_R.png</SourceFile>
-  <SourceTime>2024-07-19T17:00:10.4924805+08:00</SourceTime>
-  <DestFile>D:/Documents/Codes/C#/Game Design 1/FINALS/From Joko/FinalTestingGround-master/Content/bin/DesktopGL/Content/bullet_R.xnb</DestFile>
-  <DestTime>2024-07-19T17:00:12.841562+08:00</DestTime>
+  <SourceFile>D:/Documents/Codes/C#/Game Design 1/FINALS/From Joko/FinalTestingGround-master/Content/squirrel_L.png</SourceFile>
+  <SourceTime>2024-07-19T16:40:59.2035772+08:00</SourceTime>
+  <DestFile>D:/Documents/Codes/C#/Game Design 1/FINALS/From Joko/FinalTestingGround-master/Content/bin/DesktopGL/Content/squirrel_L.xnb</DestFile>
+  <DestTime>2024-07-19T16:42:10.3388732+08:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2022-07-26T19:44:56+08:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

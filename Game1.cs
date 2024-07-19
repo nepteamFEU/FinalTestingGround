@@ -16,12 +16,12 @@ namespace FinalTestingGround
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private PlayerStats pstats;
-        private Texture2D menuBG, BG;
+        private Texture2D menuBG, BG, rabbitLifebar, squirrelLifebar;
         private const string PATH = "stats.json";
         int speed;
         Platform platform1;
         Platform platform2;
-        Ball ball;
+        Ball obstacle1, obstacle2, obstacle3;
         Lifebar p1lifebar, p2lifebar;
         Score p1score, p2score, rounds;
         int WCBW, WCBH;
@@ -52,18 +52,25 @@ namespace FinalTestingGround
 
             projectiles = new List<projectile>();
 
-            ball = new Ball(Content.Load<Texture2D>("Untitled"), Color.Red, new Rectangle(200, 200, 50, 50),
+            //still need to fix the collission
+            obstacle1 = new Ball(Content.Load<Texture2D>("obstacle2"), Color.White, new Rectangle(500, 100, 200, 200),
+                5, 5, WCBW, WCBH, true, true);
+            obstacle2 = new Ball(Content.Load<Texture2D>("obstacle1"), Color.White, new Rectangle(200, 100, 200, 200),
+                5, 5, WCBW, WCBH, true, true);
+            obstacle3 = new Ball(Content.Load<Texture2D>("obstacle2"), Color.White, new Rectangle(150, 50, 200, 200),
                 5, 5, WCBW, WCBH, true, true);
 
-            platform1 = new Platform(Content.Load<Texture2D>("player1"),
-                new Rectangle(0, 0, 50, 150), Color.Red, 0,
-                WCBH, 0, WCBW, speed, 2, 5, 1, 0, 30, 0, 10, projectiles,
-                Content.Load<Texture2D>("charge1"), Content.Load<Texture2D>("bullet1"), new Vector2(10, 10), new Vector2(10, 30));
 
-            platform2 = new Platform(Content.Load<Texture2D>("player2"),
-                new Rectangle(WCBW - 50, WCBH - 150, 50, 150), Color.Blue,
+
+            platform1 = new Platform(Content.Load<Texture2D>("bunny_R"),
+                new Rectangle(0, 150, 150, 150), Color.White, 0,
+                WCBH, 0, WCBW, speed, 2, 5, 1, 0, 30, 0, 10, projectiles,
+                Content.Load<Texture2D>("charge1"), Content.Load<Texture2D>("bullet_healthbar"), new Vector2(10, 10), new Vector2(138, -45));
+
+            platform2 = new Platform(Content.Load<Texture2D>("squirrel_L"),
+                new Rectangle(WCBW - 100, WCBH - 350, 150, 150), Color.White,
                 0, WCBH, 0, WCBW, speed, 2, 5, 1, 0, 30, 0, 10, projectiles,
-                Content.Load<Texture2D>("charge4"), Content.Load<Texture2D>("bullet1"), new Vector2(WCBW - 40, WCBH - 40), new Vector2(WCBW - 50, WCBH - 50));
+                Content.Load<Texture2D>("charge4"), Content.Load<Texture2D>("bullet_healthbar"), new Vector2(WCBW - 40, WCBH - 40), new Vector2(WCBW - 344, WCBH - 525));
 
             p1lifebar = new P1Lifebar(Content.Load<Texture2D>("box"),
                 new Rectangle(200, 10, 100, 30), Color.White, 120, 40);
@@ -89,6 +96,8 @@ namespace FinalTestingGround
             Text = Content.Load<SpriteFont>("File");
             menuBG = Content.Load<Texture2D>("menu_bg");
             BG = Content.Load<Texture2D>("background");
+            rabbitLifebar = Content.Load<Texture2D>("bunny_healthbar1");
+            squirrelLifebar = Content.Load<Texture2D>("squirrel_healthbar");
 
         }
 
@@ -100,8 +109,8 @@ namespace FinalTestingGround
            // ball.ballMovement();
 
            // Check collision with platforms
-            ball.ballcollision(platform1.PlatRec);
-            ball.ballcollision(platform2.PlatRec);
+            obstacle1.ballcollision(platform1.PlatRec);
+            obstacle2.ballcollision(platform2.PlatRec);
 
             platform1.PlatformMovement(Keys.W, Keys.S, Keys.A, Keys.D, 1);
             platform2.PlatformMovement(Keys.I, Keys.K, Keys.J, Keys.L, 2);
@@ -160,151 +169,152 @@ namespace FinalTestingGround
 
             //loop for lifebar and scoring
             //make a conditional statement where the bullet interesects to the platform and causes damage
+            //so far I made the condition where characters intersect with the obstacles and cuases damage just to see if this work
             //Unable to integrate the bullets to this loop for the lifebar and score. Asking for help on this one...
-            if (ball.BallRec.Intersects(platform1.PlatRec)) //player 2 scores 
-            {
+              if (obstacle2.BallRec.Intersects(platform1.PlatRec)) //player 2 scores 
+              {
 
-                if (!ball.BallRec.Intersects(platform2.PlatRec))
-                {
-                    p1lifebar.LifebarWidth -= 15;
-                    p1lifebar.LifebarNumber -= 5;
+                  if (!obstacle1.BallRec.Intersects(platform2.PlatRec))
+                  {
+                      p1lifebar.LifebarWidth -= 15;
+                      p1lifebar.LifebarNumber -= 5;
 
-                    pstats = new PlayerStats()
-                    {
-                        p1score = p1score.ScoreCount,
-                        p2score = p2score.ScoreCount,
-                        p1life = p1lifebar.LifebarWidth,
-                        p2life = p2lifebar.LifebarWidth,
-                        round = rounds.ScoreCount,
-                        winner = winner
+                      pstats = new PlayerStats()
+                      {
+                          p1score = p1score.ScoreCount,
+                          p2score = p2score.ScoreCount,
+                          p1life = p1lifebar.LifebarWidth,
+                          p2life = p2lifebar.LifebarWidth,
+                          round = rounds.ScoreCount,
+                          winner = winner
 
-                    };
-
-
-
-                    Save(pstats);
-
-                    if (p1lifebar.LifebarWidth <= 0)
-                    {
-                        p1lifebar.lifebarReset();
-                        p2lifebar.lifebarReset();
-                        p2score.Updatescore();
-                        rounds.ScoreCount += 1;
-
-                        pstats = new PlayerStats()
-                        {
-                            p1score = p1score.ScoreCount,
-                            p2score = p2score.ScoreCount,
-                            p1life = p1lifebar.LifebarWidth,
-                            p2life = p2lifebar.LifebarWidth,
-                            round = rounds.ScoreCount,
-                            winner = winner
-
-                        };
-
-                        Save(pstats);
-
-                        if (p2score.ScoreCount == 2)
-                        {
-                           
-                            winner = "Player 2 Wins!";
-                            rounds.CountReset();
-                            rounds.ScoreCount += 1;
-                            p2score.CountReset();
-                            p1score.CountReset();
-
-                            pstats = new PlayerStats()
-                            {
-                                p1score = p1score.ScoreCount,
-                                p2score = p2score.ScoreCount,
-                                p1life = p1lifebar.LifebarWidth,
-                                p2life = p2lifebar.LifebarWidth,
-                                round = rounds.ScoreCount,
-                                winner = winner
-
-                            };
-
-                            Save(pstats);
-
-                        }
-                    }
-                }
-
-            }
-
-            else if (ball.BallRec.Intersects(platform2.PlatRec)) //player 1 scores
-            {
-                if (!ball.BallRec.Intersects(platform1.PlatRec))
-                {
-                    p2lifebar.LifebarWidth -= 15;
-                    p2lifebar.LifebarNumber -= 5;
-
-                    pstats = new PlayerStats()
-                    {
-                        p1score = p1score.ScoreCount,
-                        p2score = p2score.ScoreCount,
-                        p1life = p1lifebar.LifebarWidth,
-                        p2life = p2lifebar.LifebarWidth,
-                        round = rounds.ScoreCount,
-                        winner = winner
-
-                    };
+                      };
 
 
 
-                    Save(pstats);
+                      Save(pstats);
 
-                    if (p2lifebar.LifebarWidth <= 0)
-                    {
-                        p1lifebar.lifebarReset();
-                        p2lifebar.lifebarReset();
-                        p1score.Updatescore(); //adds round score +1
-                        rounds.ScoreCount += 1;
+                      if (p1lifebar.LifebarWidth <= 0)
+                      {
+                          p1lifebar.lifebarReset();
+                          p2lifebar.lifebarReset();
+                          p2score.Updatescore();
+                          rounds.ScoreCount += 1;
 
-                        pstats = new PlayerStats()
-                        {
-                            p1score = p1score.ScoreCount,
-                            p2score = p2score.ScoreCount,
-                            p1life = p1lifebar.LifebarWidth,
-                            p2life = p2lifebar.LifebarWidth,
-                            round = rounds.ScoreCount,
-                            winner = winner
+                          pstats = new PlayerStats()
+                          {
+                              p1score = p1score.ScoreCount,
+                              p2score = p2score.ScoreCount,
+                              p1life = p1lifebar.LifebarWidth,
+                              p2life = p2lifebar.LifebarWidth,
+                              round = rounds.ScoreCount,
+                              winner = winner
 
-                        };
+                          };
+
+                          Save(pstats);
+
+                          if (p2score.ScoreCount == 2)
+                          {
+
+                              winner = "Player 2 Wins!";
+                              rounds.CountReset();
+                              rounds.ScoreCount += 1;
+                              p2score.CountReset();
+                              p1score.CountReset();
+
+                              pstats = new PlayerStats()
+                              {
+                                  p1score = p1score.ScoreCount,
+                                  p2score = p2score.ScoreCount,
+                                  p1life = p1lifebar.LifebarWidth,
+                                  p2life = p2lifebar.LifebarWidth,
+                                  round = rounds.ScoreCount,
+                                  winner = winner
+
+                              };
+
+                              Save(pstats);
+
+                          }
+                      }
+                  }
+
+              }
+
+              else if (obstacle1.BallRec.Intersects(platform2.PlatRec)) //player 1 scores
+              {
+                  if (!obstacle2.BallRec.Intersects(platform1.PlatRec))
+                  {
+                      p2lifebar.LifebarWidth -= 15;
+                      p2lifebar.LifebarNumber -= 5;
+
+                      pstats = new PlayerStats()
+                      {
+                          p1score = p1score.ScoreCount,
+                          p2score = p2score.ScoreCount,
+                          p1life = p1lifebar.LifebarWidth,
+                          p2life = p2lifebar.LifebarWidth,
+                          round = rounds.ScoreCount,
+                          winner = winner
+
+                      };
 
 
-                        Save(pstats);
+
+                      Save(pstats);
+
+                      if (p2lifebar.LifebarWidth <= 0)
+                      {
+                          p1lifebar.lifebarReset();
+                          p2lifebar.lifebarReset();
+                          p1score.Updatescore(); //adds round score +1
+                          rounds.ScoreCount += 1;
+
+                          pstats = new PlayerStats()
+                          {
+                              p1score = p1score.ScoreCount,
+                              p2score = p2score.ScoreCount,
+                              p1life = p1lifebar.LifebarWidth,
+                              p2life = p2lifebar.LifebarWidth,
+                              round = rounds.ScoreCount,
+                              winner = winner
+
+                          };
 
 
-                        if (p1score.ScoreCount == 2) //Player wins 1 round of a score of 3
-                        {
-                           
-                            winner = "Player 1 Wins!";
-                            rounds.CountReset();
-                            rounds.ScoreCount += 1;
-                            p2score.CountReset();
-                            p1score.CountReset();
-
-                            pstats = new PlayerStats()
-                            {
-                                p1score = p1score.ScoreCount,
-                                p2score = p2score.ScoreCount,
-                                p1life = p1lifebar.LifebarWidth,
-                                p2life = p2lifebar.LifebarWidth,
-                                round = rounds.ScoreCount,
-                                winner = winner
-
-                            };
+                          Save(pstats);
 
 
-                            Save(pstats);
-                        }
+                          if (p1score.ScoreCount == 2) //Player wins 1 round of a score of 3
+                          {
 
-                    }
-                }
-            }
+                              winner = "Player 1 Wins!";
+                              rounds.CountReset();
+                              rounds.ScoreCount += 1;
+                              p2score.CountReset();
+                              p1score.CountReset();
 
-           
+                              pstats = new PlayerStats()
+                              {
+                                  p1score = p1score.ScoreCount,
+                                  p2score = p2score.ScoreCount,
+                                  p1life = p1lifebar.LifebarWidth,
+                                  p2life = p2lifebar.LifebarWidth,
+                                  round = rounds.ScoreCount,
+                                  winner = winner
+
+                              };
+
+
+                              Save(pstats);
+                          }
+
+                      }
+                  }
+              }
+
+
             // bullets projectiles
             foreach (var projectile in projectiles)
             {
@@ -362,26 +372,31 @@ namespace FinalTestingGround
 
                 _spriteBatch.Draw(platform1.PlatText, platform1.PlatRec, platform1.PlatColor);
                 _spriteBatch.Draw(platform2.PlatText, platform2.PlatRec, platform2.PlatColor);
-                _spriteBatch.Draw(ball.BallTexture, ball.BallRec, ball.BallColor);
+                _spriteBatch.Draw(obstacle1.BallTexture, obstacle1.BallRec, obstacle1.BallColor);
+                _spriteBatch.Draw(obstacle2.BallTexture, obstacle2.BallRec, obstacle2.BallColor);
+                _spriteBatch.Draw(obstacle3.BallTexture, obstacle3.BallRec, obstacle3.BallColor);
 
-                platform1.DrawProjectiles(_spriteBatch, Content.Load<Texture2D>("projectile"));
-                platform2.DrawProjectiles(_spriteBatch, Content.Load<Texture2D>("projectile"));
+
+                platform1.DrawProjectiles(_spriteBatch, Content.Load<Texture2D>("bullet_L")); //doesn't show any bullets???
+                platform2.DrawProjectiles(_spriteBatch, Content.Load<Texture2D>("bullet_R"));
 
                 platform1.DrawUI(_spriteBatch, 1);
                 platform2.DrawUI(_spriteBatch, 2);
 
+                _spriteBatch.Draw(rabbitLifebar, new Vector2(110, -79), Color.White);
+                _spriteBatch.Draw(squirrelLifebar, new Vector2(470, -79), Color.White);
+
                 _spriteBatch.Draw(p1lifebar.LifebarTexture, p1lifebar.LifebarRectangle, p1lifebar.LifebarColor);
                 _spriteBatch.Draw(p2lifebar.LifebarTexture, p2lifebar.LifebarRectangle, p2lifebar.LifebarColor);
 
-                _spriteBatch.DrawString(Text, p1score.ScoreCount.ToString(), new Vector2(200, 50), Color.Black);
-                _spriteBatch.DrawString(Text, p2score.ScoreCount.ToString(), new Vector2(500, 50), Color.Black);
+                _spriteBatch.DrawString(Text, p1score.ScoreCount.ToString(), new Vector2(205, 50), Color.Black);
+                _spriteBatch.DrawString(Text, p2score.ScoreCount.ToString(), new Vector2(606, 50), Color.Black);
                 _spriteBatch.DrawString(Text, "   ROUND", new Vector2(350, 10), Color.Black);
                 _spriteBatch.DrawString(Text, rounds.ScoreCount.ToString(), new Vector2(400, 40), Color.Black);
 
                 if (!string.IsNullOrEmpty(winner)) //checks winner
                 {
                     _spriteBatch.DrawString(Text, winner.ToString(), new Vector2(320, 80), Color.Black);
-
 
                 }
 
