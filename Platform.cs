@@ -6,29 +6,32 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 
 namespace FinalTestingGround
 {
     internal class Platform
     {
         Texture2D platText;
-        Rectangle platRec;
+        public Rectangle platRec;
         Color platColor;
         int boundTop, boundBottom, boundLeft, boundRight;
         int speed, maxammo, ammo, reload, charge, maxcharge, cooldown, maxcooldown;
         List<projectile> projectiles;
-        
+        SoundEffect hit, shoot, win;
+        bool soundPlayed;
 
         // UI elements
         Texture2D chargeSprite;
         Texture2D ammoSprite;
         Vector2 chargePosition;
         Vector2 ammoPosition;
+        
 
         public Platform(Texture2D platText, Rectangle platRec, Color platColor, int boundTop,
             int boundBottom, int boundLeft, int boundRight, int speed, int ammo, int maxammo,
             int reload, int charge, int maxcharge, int cooldown, int maxcooldown, List<projectile> projectiles,
-            Texture2D chargeSprite, Texture2D ammoSprite, Vector2 chargePosition, Vector2 ammoPosition)
+            Texture2D chargeSprite, Texture2D ammoSprite, Vector2 chargePosition, Vector2 ammoPosition, SoundEffect hit, SoundEffect shoot, SoundEffect win)
         {
             this.platText = platText;
             this.platRec = platRec;
@@ -52,7 +55,10 @@ namespace FinalTestingGround
             this.chargePosition = chargePosition;
             this.ammoPosition = ammoPosition;
 
-
+            this.hit= hit;
+            this.shoot = shoot;
+            this.win = win;
+            soundPlayed = false;
 
         }
 
@@ -106,6 +112,7 @@ namespace FinalTestingGround
         {
             if (ammo > 0 && cooldown <= 0)
             {
+                shoot.Play();
                 if (player == 1)
                 {
                     Rectangle spawnPosition = new Rectangle(platRec.X + platRec.Width -6, platRec.Y + platRec.Height / 2 - 4, 25, 25);
@@ -222,6 +229,7 @@ namespace FinalTestingGround
         {
             if (score.ScoreCount == 2)
             {
+                win.Play();
                 winner = "Player " + self + " Wins!";
                 rounds.CountReset();
                 rounds.ScoreCount += 1;
@@ -245,13 +253,20 @@ namespace FinalTestingGround
         }
 
         public void damageCheck(int player, projectile projectile, Lifebar lifebar,
-                    Lifebar opponent, Score score, Score opponentScore, Score rounds, PlayerStats pstats)
+                        Lifebar opponent, Score score, Score opponentScore,
+                        Score rounds, PlayerStats pstats)
         {
-            if (platRec.Intersects(projectile.DamageCheck) == true)
+            if (platRec.Intersects(projectile.DamageCheck))
             {
-                lifebar.LifebarWidth--;
-                lifebar.LifebarNumber = lifebar.LifebarNumber -= 5;
-              
+                if (!soundPlayed)
+                {
+                    hit.Play();
+                    soundPlayed = true;
+                }
+
+                lifebar.LifebarWidth-= 5;
+                lifebar.LifebarNumber -= 5;
+
                 if (lifebar.LifebarWidth <= 0)
                 {
                     lifebar.lifebarReset();
@@ -259,10 +274,15 @@ namespace FinalTestingGround
                     opponentScore.Updatescore();
                     rounds.ScoreCount++;
                 }
-                //WinnerCheck(player,lifebar, opponent, score, opponentScore, rounds,"", pstats);
-                return; //decrements width is the original statement here
+
+                // WinnerCheck(player, lifebar, opponent, score, opponentScore, rounds, "", pstats);
+            }
+            else
+            {
+                soundPlayed = false;
             }
         }
+
         public int Speed { get => speed; set => speed = value; }
 
     }

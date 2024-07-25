@@ -32,6 +32,7 @@ namespace FinalTestingGround
         Texture2D ammoSprite;
         SpriteFont Text;
         Song bgm;
+        List<SoundEffect> soundEffects;
         SoundEffect hitsfx, winsfx, shootsfx;
         Selection start, cont, exit;
         bool StartGame, visibletext;
@@ -45,6 +46,7 @@ namespace FinalTestingGround
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            // soundEffects = new List<SoundEffect>();
 
         }
 
@@ -53,6 +55,8 @@ namespace FinalTestingGround
             WCBW = Window.ClientBounds.Width;
             WCBH = Window.ClientBounds.Height;
             speed = 9; // Initialize speed before creating platform instances
+
+            
 
             projectiles = new List<projectile>();
             projectilesToRemove = new List<projectile>();
@@ -70,12 +74,16 @@ namespace FinalTestingGround
             platform1 = new Platform(Content.Load<Texture2D>("bunny_R"),
                 new Rectangle(0, 150, 63, 59), Color.White, 0,
                 WCBH, 0, WCBW, speed, 2, 5, 1, 0, 30, 0, 10, projectiles,
-                Content.Load<Texture2D>("charge1"), Content.Load<Texture2D>("bullet_healthbar"), new Vector2(10, 10), new Vector2(138, -45));
+                Content.Load<Texture2D>("charge1"), Content.Load<Texture2D>("bullet_healthbar"),
+                new Vector2(10, 10), new Vector2(138, -45),
+                Content.Load<SoundEffect>("hit_sfx"), Content.Load<SoundEffect>("shoot_sfx"),Content.Load<SoundEffect>("win"));
 
             platform2 = new Platform(Content.Load<Texture2D>("squirrel_L"),
                 new Rectangle(WCBW - 100, WCBH - 350, 67, 56), Color.White,
                 0, WCBH, 0, WCBW, speed, 2, 5, 1, 0, 30, 0, 10, projectiles,
-                Content.Load<Texture2D>("charge4"), Content.Load<Texture2D>("bullet_healthbar"), new Vector2(WCBW - 40, WCBH - 40), new Vector2(WCBW - 344, WCBH - 525));
+                Content.Load<Texture2D>("charge4"), Content.Load<Texture2D>("bullet_healthbar"),
+                new Vector2(WCBW - 40, WCBH - 40), new Vector2(WCBW - 344, WCBH - 525),
+                Content.Load<SoundEffect>("hit_sfx"), Content.Load<SoundEffect>("shoot_sfx"),Content.Load<SoundEffect>("win"));
 
             p1lifebar = new P1Lifebar(Content.Load<Texture2D>("box"),
                 new Rectangle(200, 10, 100, 30), Color.Green, 120, 40);
@@ -97,24 +105,28 @@ namespace FinalTestingGround
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             Text = Content.Load<SpriteFont>("File");
-            hitsfx = Content.Load<SoundEffect> ("hit_sfx");
-            shootsfx = Content.Load<SoundEffect>("shoot_sfx");
-            winsfx = Content.Load<SoundEffect>("win");
+
+            //hitsfx = Content.Load<SoundEffect>("hit_sfx");
+            //shootsfx = Content.Load<SoundEffect>("shoot_sfx");
+            //winsfx = Content.Load<SoundEffect>("win");
+
             bgm = Content.Load<Song>("bgm");
             menuBG = Content.Load<Texture2D>("menu_bg");
             BG = Content.Load<Texture2D>("background");
             rabbitLifebar = Content.Load<Texture2D>("bunny_healthbar1");
             squirrelLifebar = Content.Load<Texture2D>("squirrel_healthbar");
 
+          
             MediaPlayer.Play(bgm);
-
+            MediaPlayer.Volume = 0.8f;
+            MediaPlayer.IsRepeating = true;
+            
         }
 
         protected override void Update(GameTime gameTime)
         {
 
            
-            
             
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
@@ -133,6 +145,7 @@ namespace FinalTestingGround
 
             platform2.ShootControl(Keys.H, 2);
             platform2.UpdateProjectiles();
+
 
             // Get the current and previous mouse state
             MouseState mouseState = Mouse.GetState();
@@ -190,7 +203,10 @@ namespace FinalTestingGround
         platform1.damageCheck(1, projectile, p1lifebar, p2lifebar, p1score, p2score, rounds, pstats); //pstats prone to failure
         platform2.damageCheck(2, projectile, p2lifebar, p1lifebar, p2score, p1score, rounds, pstats);
 
-//  MediaPlayer.Play(shootsfx);
+        if (projectile.Position.Intersects(platform1.platRec) || projectile.Position.Intersects(platform2.platRec))
+                {
+                    projectilesToRemove.Add(projectile);
+                }
 
             }
 
@@ -204,7 +220,7 @@ namespace FinalTestingGround
                 Save((platform1.WinnerCheck(1, p1lifebar, p2lifebar, p1score, p2score, rounds, "", pstats)));
                 winner = "Player 1 Wins!";
 
-                winsfx.Play();
+                //winsfx.Play();
             }
 
             if (p2score.ScoreCount == 2)
@@ -212,7 +228,7 @@ namespace FinalTestingGround
                 Save((platform2.WinnerCheck(2, p2lifebar, p1lifebar, p2score, p1score, rounds, "", pstats)));
                 winner = "Player 2 Wins!";
 
-                winsfx.Play();
+                //winsfx.Play();
             }
 
 
