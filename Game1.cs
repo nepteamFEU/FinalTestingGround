@@ -24,19 +24,20 @@ namespace FinalTestingGround
         Platform platform1;
         Platform platform2;
         Ball obstacle1, obstacle2, obstacle3;
-        Lifebar p1lifebar, p2lifebar;
+        Tree obstacle4;
+        Lifebar p1lifebar, p2lifebar, TreeLifebar;
         Score p1score, p2score, rounds;
-        int WCBW, WCBH;
+        int WCBW, WCBH, treeHP;
         List<projectile> projectiles, projectilesToRemove;
         Texture2D chargeSprite;
         Texture2D ammoSprite;
         SpriteFont Text;
         Song bgm;
         List<SoundEffect> soundEffects;
-        SoundEffect hitsfx, winsfx, shootsfx;
+        SoundEffect hitsfx, winsfx, shootsfx, treefallsfx;
         Selection start, cont, exit;
         bool StartGame, visibletext;
-
+        
 
 
         string winner = "";
@@ -47,11 +48,13 @@ namespace FinalTestingGround
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             // soundEffects = new List<SoundEffect>();
+            
 
         }
 
         protected override void Initialize()
         {
+            Window.Title = "Prey";
             WCBW = Window.ClientBounds.Width;
             WCBH = Window.ClientBounds.Height;
             speed = 9; // Initialize speed before creating platform instances
@@ -68,6 +71,7 @@ namespace FinalTestingGround
                 5, 5, WCBW, WCBH, true, true);
             obstacle3 = new Ball(Content.Load<Texture2D>("obstacle2"), Color.White, new Rectangle(250, 50, 91, 57),
                 5, 5, WCBW, WCBH, true, true);
+            obstacle4 = new Tree(Content.Load<Texture2D>("obstacle3_interact"), new Rectangle(295, 175, 210, 274), 10, Content.Load<SoundEffect>("treefall"));
 
 
 
@@ -89,6 +93,9 @@ namespace FinalTestingGround
                 new Rectangle(200, 10, 100, 30), Color.Green, 120, 40);
             p2lifebar = new P2Lifebar(Content.Load<Texture2D>("box"),
                 new Rectangle(500, 10, 100, 30), Color.Green, 120, 40);
+            TreeLifebar = new TreeLifebar(Content.Load<Texture2D>("box"),
+                new Rectangle(335, 435, 120, 10), Color.YellowGreen, 150, 40);
+            treeHP = TreeLifebar.LifebarWidth;
 
             p1score = new P1Score(Color.White, 0);
             p2score = new P2Score(Color.White, 0);
@@ -105,6 +112,8 @@ namespace FinalTestingGround
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             Text = Content.Load<SpriteFont>("File");
+
+            //treefallsfx = Content.Load<SoundEffect>("treefall");
 
             //hitsfx = Content.Load<SoundEffect>("hit_sfx");
             //shootsfx = Content.Load<SoundEffect>("shoot_sfx");
@@ -200,6 +209,13 @@ namespace FinalTestingGround
         {
             projectilesToRemove.Add(projectile);
         }
+        if (projectile.Position.Intersects(obstacle4.RecTree))
+                {
+                    obstacle4.TreeHit(projectile.Position);
+                    projectilesToRemove.Add(projectile);
+                    TreeLifebar.LifebarWidth = TreeLifebar.LifebarWidth - (treeHP/10);
+                    obstacle4.TreeCrumble(Content.Load<Texture2D>("obstacle3_collide"), new Rectangle(335, 325, 132, 79));
+                }
         platform1.damageCheck(1, projectile, p1lifebar, p2lifebar, p1score, p2score, rounds, pstats); //pstats prone to failure
         platform2.damageCheck(2, projectile, p2lifebar, p1lifebar, p2score, p1score, rounds, pstats);
 
@@ -284,7 +300,7 @@ namespace FinalTestingGround
                 _spriteBatch.Draw(obstacle1.BallTexture, obstacle1.BallRec, obstacle1.BallColor);
                 _spriteBatch.Draw(obstacle2.BallTexture, obstacle2.BallRec, obstacle2.BallColor);
                 _spriteBatch.Draw(obstacle3.BallTexture, obstacle3.BallRec, obstacle3.BallColor);
-
+                _spriteBatch.Draw(obstacle4.FullTree, obstacle4.RecTree, Color.White);
 
                 platform1.DrawProjectiles(_spriteBatch, Content.Load<Texture2D>("bullet_L")); //doesn't show any bullets???
                 platform2.DrawProjectiles(_spriteBatch, Content.Load<Texture2D>("bullet_R"));
@@ -297,6 +313,7 @@ namespace FinalTestingGround
 
                 _spriteBatch.Draw(p1lifebar.LifebarTexture, p1lifebar.LifebarRectangle, p1lifebar.LifebarColor);
                 _spriteBatch.Draw(p2lifebar.LifebarTexture, p2lifebar.LifebarRectangle, p2lifebar.LifebarColor);
+                _spriteBatch.Draw(TreeLifebar.LifebarTexture,TreeLifebar.LifebarRectangle, TreeLifebar.LifebarColor);
 
                 _spriteBatch.DrawString(Text, p1score.ScoreCount.ToString(), new Vector2(205, 50), Color.Black);
                 _spriteBatch.DrawString(Text, p2score.ScoreCount.ToString(), new Vector2(606, 50), Color.Black);

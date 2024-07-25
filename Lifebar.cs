@@ -38,11 +38,17 @@ namespace FinalTestingGround
         {
             LifebarWidth = 120;
             LifebarNumber = 40;
-            LifebarColor = Color.White;
+            LifebarColor = Color.Green;
         }
 
     }
-
+    internal class TreeLifebar : Lifebar
+    {
+        public TreeLifebar(Texture2D lifebarTexture, Rectangle lifebarRectangle, Color lifebarColor, int lifebarWidth, int lifebarNumber)
+            : base(lifebarTexture, lifebarRectangle, lifebarColor, lifebarWidth, lifebarNumber)
+        {
+        }
+    }
     internal class P1Lifebar : Lifebar
     {
         public P1Lifebar(Texture2D lifebarTexture, Rectangle lifebarRectangle, Color lifebarColor, int lifebarWidth, int lifebarNumber)
@@ -59,13 +65,14 @@ namespace FinalTestingGround
         public P2Lifebar(Texture2D lifebarTexture, Rectangle lifebarRectangle, Color lifebarColor, int lifebarWidth, int lifebarNumber)
             : base(lifebarTexture, lifebarRectangle, lifebarColor, lifebarWidth, lifebarNumber)
         {
-
         }
 
-
     }
-
-
-
-
 }
+
+
+
+
+
+
+    
